@@ -1,0 +1,70 @@
+     1                                  section .text
+     2                                  global ReadInt
+     3                                  
+     4                                  ReadInt:
+     5 00000000 51                      	push 	ecx
+     6 00000001 52                      	push 	edx
+     7 00000002 56                      	push 	esi
+     8 00000003 57                      	push 	edi
+     9 00000004 31C9                    	xor 	ecx,ecx	
+    10 00000006 31F6                    	xor		esi,esi
+    11                                  	.nextchar:
+    12 00000008 31C0                    		xor 	eax,eax
+    13                                  		call    mio_readchar
+    14          ******************       error: symbol `mio_readchar' undefined
+    15 0000000A 3C0D                    		cmp     al, 13  ;ENTER
+    16 0000000C 7458                    		je      .end
+    17                                  		call    mio_writechar
+    18          ******************       error: symbol `mio_writechar' undefined
+    19 0000000E 3C08                    		cmp     al, 8 	;BACKSPACE
+    20 00000010 7430                    		je     .back
+    21 00000012 3C2D                    		cmp		al, '-' ;ha '-'
+    22 00000014 741F                    		je		.minusz
+    23 00000016 3C30                    		cmp 	al, '0' ;kisebb mint '0'
+    24 00000018 7C39                    		jl 		.errend
+    25 0000001A 3C39                    		cmp 	al, '9' ;nagyobb mint 9
+    26 0000001C 7F35                    		jg		.errend
+    27 0000001E 6BC90A                  		imul 	ecx, 10
+    28 00000021 83E930                  		sub 	ecx, '0'
+    29 00000024 30E4                    		xor 	ah,ah
+    30 00000026 01C1                    		add 	ecx, eax	
+    31 00000028 EBDE                    		jmp     .nextchar
+    32 0000002A C3                      		ret
+    33                                  	.minusz:
+    34 0000002B 83F900                  		cmp 	ecx, 0
+    35 0000002E 7523                    		jne 	.errend ;ha nem az elejen van
+    36 00000030 BE01000000              		mov 	esi, 1
+    37 00000035 EBD1                    		jmp		.nextchar
+    38 00000037 C3                      		ret
+    39                                  	.back:
+    40 00000038 B020                    		mov     al, ' '
+    41                                  		call    mio_writechar
+    42          ******************       error: symbol `mio_writechar' undefined
+    43 0000003A B008                    		mov     al, 8
+    44                                  		call    mio_writechar
+    45          ******************       error: symbol `mio_writechar' undefined
+    46 0000003C EBCA                    		jmp		.nextchar
+    47 0000003E C3                      		ret
+    48                                  	.errend:
+    49 0000003F BB01000000              		mov 	ebx, 1
+    50 00000044 5F                      		pop 	edi
+    51 00000045 5E                      		pop 	esi
+    52 00000046 5A                      		pop		edx
+    53 00000047 59                      		pop 	ecx
+    54 00000048 665D                    		pop 	bp
+    55 0000004A C3                      		ret
+    56                                  	.inverz:
+    57 0000004B F7D9                    		neg 	ecx
+    58 0000004D 31F6                    		xor		esi, esi
+    59 0000004F EB15                    		jmp		.end
+    60 00000051 C3                      		ret
+    61                                  	.end:
+    62 00000052 31DB                    		xor 	ebx, ebx
+    63 00000054 83FE01                  		cmp		esi, 1
+    64 00000057 74F2                    		je		.inverz
+    65 00000059 89C8                    		mov 	eax, ecx
+    66 0000005B 5F                      		pop 	edi
+    67 0000005C 5E                      		pop 	esi
+    68 0000005D 5A                      		pop		edx
+    69 0000005E 59                      		pop 	ecx
+    70 0000005F C3                      		ret
